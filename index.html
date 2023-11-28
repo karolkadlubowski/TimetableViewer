@@ -1,13 +1,17 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dataset Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <h1>Super</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.</p>
+    <input type="file" id="load-dataset" accept=".csv">
+    <input type="text" id="criterion-name" placeholder="Enter criterion name">
+    <input type="text" id="criterion-condition" placeholder="Enter a new condition">
+    <button id="add-condition">Add Condition and Update Plot</button>
+    <div id="plot"></div>
+    <script src="script.js"></script>
 </body>
 </html>
