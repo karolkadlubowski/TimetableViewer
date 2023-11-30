@@ -6,11 +6,15 @@ document.getElementById('load-dataset').addEventListener('change', function(even
     const reader = new FileReader();
     reader.onload = function(e) {
         const text = e.target.result;
-        let newDataset = parseCSV(text);
+        let newDataset = {
+            data: parseCSV(text),
+            fileName: file.name.split('.')[0], // Store the file name without extension
+            color: generateColor(datasets.length) // Assign generated color to dataset
+        };
 
         // Apply all conditions to the new dataset
         conditions.forEach(condition => {
-            newDataset.forEach(row => {
+            newDataset.data.forEach(row => { // Corrected to newDataset.data
                 try {
                     row[condition.name] = eval(condition.formula);
                 } catch (error) {
@@ -31,24 +35,33 @@ function addNewCondition() {
     let conditionName = document.getElementById('criterion-name').value;
     let formula = document.getElementById('criterion-condition').value;
 
+    // Check if a condition with the same name already exists
+    let conditionExists = conditions.some(condition => condition.name === conditionName);
+    if (conditionExists) {
+        alert("A condition with this name already exists. Please use a different name.");
+        return; // Exit the function without adding the new condition
+    }
+
     // Add the new condition to the conditions list
     conditions.push({ name: conditionName, formula: formula });
 
-    // Apply all conditions to each dataset
-    datasets.forEach(dataset => {
-        dataset.forEach(row => {
-            conditions.forEach(condition => {
-                try {
-                    row[condition.name] = eval(condition.formula);
-                } catch (error) {
-                    console.error('Error evaluating formula for', condition.name, error);
-                }
-            });
+    // Apply the newly added condition to each dataset
+    datasets.forEach(datasetObject => {
+        datasetObject.data.forEach(row => {
+            try {
+                // Only apply the new condition's formula
+                row[conditionName] = eval(formula.replace(/row/g, 'row'));
+            } catch (error) {
+                console.error('Error evaluating formula for', conditionName, error);
+            }
         });
     });
 
     updatePlot();
 }
+
+
+
 
 function updateBarPlot() {
     let plotData = [];
@@ -68,21 +81,19 @@ function updateBarPlot() {
         bargroupgap: 0.02 // Reduce the gap between bars within a group
     };
 
-    let datasetColors = ['blue', 'red', 'green', 'orange', 'purple']; // Assign colors for each dataset
-
     conditions.forEach((condition, conditionIndex) => {
-        let barsForCondition = datasets.map((dataset, datasetIndex) => {
-            let totalClasses = dataset.length;
-            let conditionCount = dataset.filter(row => row[condition.name]).length;
+        let barsForCondition = datasets.map((datasetObject, datasetIndex) => {
+            let totalClasses = datasetObject.data.length;
+            let conditionCount = datasetObject.data.filter(row => row[condition.name]).length;
             let percentage = (conditionCount / totalClasses) * 100;
 
             return {
                 x: [condition.name], // Use condition names as x-axis values
                 y: [percentage],
                 type: 'bar',
-                name: `Dataset ${datasetIndex + 1}`,
+                name: datasetObject.fileName,
                 marker: {
-                    color: datasetColors[datasetIndex % datasetColors.length]
+                    color: datasetObject.color // Use assigned color
                 },
                 text: [`${percentage.toFixed(2)}%`],
                 textposition: 'auto',
@@ -96,6 +107,7 @@ function updateBarPlot() {
     // Plot the data using Plotly
     Plotly.newPlot('plot', plotData, layout);
 }
+
 
 
 function parseCSV(csvText) {
@@ -117,7 +129,6 @@ function parseCSV(csvText) {
     return data;
 }
 
-// After adding the event listener for 'load-dataset' and 'add-condition'
 
 document.getElementById('plot-type').addEventListener('change', function() {
     updatePlot();
@@ -134,29 +145,55 @@ function updatePlot() {
 }
 
 function updateParallelCoordinatesPlot() {
-    let dimensions = conditions.map(condition => {
-        return {
-            label: condition.name,
-            values: datasets.map(dataset => {
-                return dataset.filter(row => row[condition.name]).length / dataset.length * 100;
-            })
-        };
+    let plotData = []; // Array to hold scatter plot data
+    let yAxisPosition = 1; // Initial Y-axis position for each dimension
+
+    datasets.forEach((dataset, datasetIndex) => {
+        let xValues = []; // X values for scatter plot
+        let yValues = []; // Y values for scatter plot
+
+        conditions.forEach((condition, conditionIndex) => {
+            // Calculate the value for this condition for each dataset
+            let conditionValue = dataset.data.map(row => row[condition.name] ? 100 : 0).reduce((a, b) => a + b, 0) / dataset.data.length;
+            xValues.push(conditionIndex + 1); // X-value is the position of the condition
+            yValues.push(conditionValue); // Y-value is the calculated condition value
+        });
+
+        plotData.push({
+            x: xValues,
+            y: yValues,
+            type: 'scatter',
+            mode: 'lines',
+            name: dataset.fileName,
+            line: {
+                color: dataset.color,
+                width: 2
+            }
+        });
+
+        yAxisPosition += 1; // Increment Y-axis position for the next dimension
     });
 
-    let parallelData = [{
-        type: 'parcoords',
-        pad: [80,80,80,80],
-        line: {
-            color: 'blue'
-        },
-        dimensions: dimensions
-    }];
-
     let layout = {
-        title: 'Parallel Coordinates Analysis'
+        title: 'Parallel Coordinates Analysis (Workaround)',
+        xaxis: {
+            tickvals: conditions.map((_, index) => index + 1),
+            ticktext: conditions.map(condition => condition.name),
+        },
+        yaxis: {
+            range: [0, 100]
+        }
     };
 
-    Plotly.newPlot('plot', parallelData, layout);
+    Plotly.newPlot('plot', plotData, layout);
 }
 
-// Rest of your code remains the same
+
+
+
+
+function generateColor(index) {
+    // Simple approach to generate a color
+    let hue = index * 137.508; // Use golden angle approximation for even distribution
+    return `hsl(${hue % 360}, 50%, 60%)`; // HSL: Hue, Saturation, Lightness
+}
