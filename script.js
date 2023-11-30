@@ -159,4 +159,66 @@ function updateParallelCoordinatesPlot() {
     Plotly.newPlot('plot', parallelData, layout);
 }
 
-// Rest of your code remains the same
+// new// ... Your existing code ...
+
+function addNewCondition() {
+    let conditionName = document.getElementById('criterion-name').value;
+    let formula = document.getElementById('criterion-condition').value;
+
+    // Add the new condition to the conditions list
+    conditions.push({ name: conditionName, formula: formula });
+
+    // Apply all conditions to each dataset
+    datasets.forEach(dataset => {
+        dataset.forEach(row => {
+            conditions.forEach(condition => {
+                try {
+                    row[condition.name] = eval(condition.formula);
+                } catch (error) {
+                    console.error('Error evaluating formula for', condition.name, error);
+                }
+            });
+        });
+    });
+
+    updatePlot();
+}
+
+function deleteLastDataset() {
+    // Remove the last dataset from the datasets array
+    if (datasets.length > 0) {
+        datasets.pop();
+        displayDatasetList();
+        updatePlot();
+    }
+}
+
+function displayDatasetList() {
+    const datasetListContainer = document.getElementById('dataset-list');
+    datasetListContainer.innerHTML = '';
+
+    datasets.forEach((dataset, index) => {
+        const datasetItem = document.createElement('div');
+        datasetItem.className = 'dataset-item';
+
+        const datasetName = document.createElement('span');
+        datasetName.textContent = `File: ${dataset.fileName}`; // Display the file name
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            deleteDataset(index);
+        });
+
+        datasetItem.appendChild(datasetName);
+        datasetItem.appendChild(deleteButton);
+
+        datasetListContainer.appendChild(datasetItem);
+    });
+}
+
+function deleteDataset(index) {
+    datasets.splice(index, 1);
+    displayDatasetList();
+    updatePlot();
+}
