@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Dataset Analysis</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
+
 <body>
     <input type="file" id="load-dataset" accept=".csv">
     <input type="text" id="criterion-name" placeholder="Enter criterion name">
@@ -14,8 +16,24 @@
     <select id="plot-type">
         <option value="bar">Bar Plot</option>
         <option value="parallel">Parallel Coordinates Plot</option>
-    </select>    
+    </select>
+    <div id="help-icon">
+        <span class="icon">ℹ️</span>
+        <div class="info">
+            <p>Example formulas:</p>
+            <p><b>Overbooked:</b><br> row["Enrolled in the shift"] - row["Capacity"] > 0 <br>
+                <i>Change 0 to desired threshold of overbooking</i>
+            </p>
+            <p><b>Room requirement not fulfilled:</b><br> !row["Classroom
+                characteristics"].toLowerCase().includes(row["Characteristics of the room requested for the
+                class"].toLowerCase())</p>
+
+            <p><b>Classes scheduled outside of standard hours:</b><br>new Date('1970/01/01 ' + row["Start"]).getHours() < 9 || new
+                    Date('1970/01/01 ' + row["End"]).getHours() > 17</p>
+        </div>
+    </div>
     <div id="plot"></div>
     <script src="script.js"></script>
 </body>
+
 </html>
