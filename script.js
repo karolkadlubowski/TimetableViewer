@@ -50,7 +50,7 @@ function addNewCondition() {
     updatePlot();
 }
 
-function updatePlot() {
+function updateBarPlot() {
     let plotData = [];
     let layout = {
         title: 'Conditions Analysis',
@@ -116,3 +116,47 @@ function parseCSV(csvText) {
 
     return data;
 }
+
+// After adding the event listener for 'load-dataset' and 'add-condition'
+
+document.getElementById('plot-type').addEventListener('change', function() {
+    updatePlot();
+});
+
+// Modify the updatePlot function
+function updatePlot() {
+    const plotType = document.getElementById('plot-type').value;
+    if (plotType === 'bar') {
+        updateBarPlot();
+    } else if (plotType === 'parallel') {
+        updateParallelCoordinatesPlot();
+    }
+}
+
+function updateParallelCoordinatesPlot() {
+    let dimensions = conditions.map(condition => {
+        return {
+            label: condition.name,
+            values: datasets.map(dataset => {
+                return dataset.filter(row => row[condition.name]).length / dataset.length * 100;
+            })
+        };
+    });
+
+    let parallelData = [{
+        type: 'parcoords',
+        pad: [80,80,80,80],
+        line: {
+            color: 'blue'
+        },
+        dimensions: dimensions
+    }];
+
+    let layout = {
+        title: 'Parallel Coordinates Analysis'
+    };
+
+    Plotly.newPlot('plot', parallelData, layout);
+}
+
+// Rest of your code remains the same
