@@ -32,8 +32,13 @@ document.getElementById('load-dataset').addEventListener('change', function(even
 document.getElementById('add-condition').addEventListener('click', addNewCondition);
 
 function addNewCondition() {
-    let conditionName = document.getElementById('criterion-name').value;
-    let formula = document.getElementById('criterion-condition').value;
+    let conditionName = document.getElementById('criterion-name').value.trim();
+    let formula = document.getElementById('criterion-condition').value.trim();
+
+    if (!conditionName) {
+        alert("The criterion name cannot be empty. Please enter a name.");
+        return; // Exit the function without adding the new condition
+    }
 
     // Check if a condition with the same name already exists
     let conditionExists = conditions.some(condition => condition.name === conditionName);
@@ -104,8 +109,22 @@ function updateBarPlot() {
         plotData.push(...barsForCondition);
     });
 
-    // Plot the data using Plotly
-    Plotly.newPlot('plot', plotData, layout);
+    Plotly.newPlot('plot', plotData, layout).then(() => {
+        document.getElementById('plot').on('plotly_click', function(data) {
+            if (data.points && data.points[0]) {
+                const clickedCriterionName = data.points[0].x;
+                const clickedDataset = datasets.find(d => d.fileName === data.points[0].data.name);
+                if (clickedDataset) {
+                    handleDatasetSelection(clickedDataset, clickedCriterionName);
+                }
+            }
+        });
+    });
+}
+
+function handleDatasetSelection(dataset, criterionName) {
+    console.log("Selected dataset set to:", dataset);
+    openChordDiagramWindow(dataset, criterionName);
 }
 
 
@@ -168,6 +187,10 @@ function updateParallelCoordinatesPlot() {
             line: {
                 color: dataset.color,
                 width: 2
+            },
+            // Here we add the click event
+            onclick: function() {
+                handleDatasetSelection(dataset);
             }
         });
 
@@ -188,12 +211,136 @@ function updateParallelCoordinatesPlot() {
     Plotly.newPlot('plot', plotData, layout);
 }
 
-
-
-
-
 function generateColor(index) {
     // Simple approach to generate a color
     let hue = index * 137.508; // Use golden angle approximation for even distribution
     return `hsl(${hue % 360}, 50%, 60%)`; // HSL: Hue, Saturation, Lightness
+}
+
+function openChordDiagramWindow(dataset, criterionName) {
+    const newWindow = window.open('chordDiagram.html', 'Chord Diagram', 'width=800,height=1300');    if (newWindow) {
+        newWindow.document.write(`
+        <html>
+        <head>
+            <title>Chord Diagram - ${criterionName}</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                .legend { margin-top: 20px; }
+                .legend-color-box { display: inline-block; width: 12px; height: 12px; margin-right: 5px; }
+            </style>
+        </head>
+        <body>
+            <h1>Relations between criterias</h1>
+            <div id="chart"></div>
+        </body>
+        </html>
+    `);
+    newWindow.document.close(); // Zakończ pisanie do dokumentu
+    createChordDiagram(newWindow.document, dataset);
+    } else {
+        alert("Pop-up blocked. Please allow pop-ups for this site.");
+        console.log("Pop-up blocked. Please allow pop-ups for this site.");
+    }
+}
+
+
+
+
+function createChordDiagram(doc, dataset) {
+    // Budowanie macierzy współwystępowania kryteriów
+    let { matrix, criteria } = buildMatrix(dataset.data);
+
+    // Reszta funkcji bez zmian
+    renderChordDiagram(doc, matrix, criteria);
+
+    const legendContainer = doc.createElement('div');
+    legendContainer.className = 'legend';
+    doc.body.appendChild(legendContainer);
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10); // Użyj tego samego schematu kolorów co dla wykresu
+
+    criteria.forEach((criterion, index) => {
+        const legendEntry = doc.createElement('div');
+        legendEntry.textContent = criterion;
+        legendEntry.style.color = color(index);
+        legendContainer.appendChild(legendEntry);
+    });
+}
+
+function buildMatrix(data) {
+    // Pobierz nazwy kryteriów z nagłówków
+    const criteria = Object.keys(data[0]).slice(13);
+    console.log("Criteria:", criteria);
+    const matrixSize = criteria.length;
+    let matrix = Array.from({ length: matrixSize }, () => new Array(matrixSize).fill(0));
+
+    // Wypełnij macierz współwystępowania
+    data.forEach(row => {
+        for (let i = 0; i < matrixSize; i++) {
+            for (let j = i; j < matrixSize; j++) { // Zmieniono pętlę, aby nie porównywać dwa razy tego samego
+                const valueI = row[criteria[i]];
+                const valueJ = row[criteria[j]];
+                if (valueI && valueJ && valueI !== "false" && valueJ !== "false") { // Sprawdzenie czy wartości nie są "false" lub fałszywe
+                    matrix[i][j]++;
+                    if (i !== j) {
+                        matrix[j][i]++; // Ponieważ macierz jest symetryczna
+                    }
+                }
+            }
+        }
+    });
+
+    return { matrix, criteria };
+}
+
+
+function renderChordDiagram(doc, matrix, criteria) {
+    const width = 800;
+    const height = 800;
+    const outerRadius = Math.min(width, height) * 0.5 - 40;
+    const innerRadius = outerRadius - 30;
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    console.log("Matrix:", matrix);
+
+    // Create the SVG container
+    const svg = d3.select(doc.body).append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+        .attr('transform', `translate(${width / 2},${height / 2})`);
+
+    // Create the chord layout
+    const chord = d3.chord()
+        .padAngle(0.05)
+        .sortSubgroups(d3.descending);
+
+    // Compute the chord layout
+    const chords = chord(matrix);
+
+    // Create the groups (outer arcs)
+    const group = svg.append('g')
+        .selectAll('g')
+        .data(chords.groups)
+        .enter()
+        .append('g');
+
+    // Draw the outer arcs
+    group.append('path')
+        .style('fill', d => color(d.index))
+        .style('stroke', d => d3.rgb(color(d.index)).darker())
+        .attr('d', d3.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius));
+
+    // Draw the ribbons (inner chords)
+    svg.append('g')
+        .attr('fill-opacity', 0.67)
+        .selectAll('path')
+        .data(chords)
+        .enter()
+        .append('path')
+        .attr('d', d3.ribbon().radius(innerRadius))
+        .style('fill', d => color(d.source.index))
+        .style('stroke', d => d3.rgb(color(d.source.index)).darker());
 }
