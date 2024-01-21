@@ -32,6 +32,22 @@
 
             <p><b>Classes scheduled outside of standard hours:</b><br>new Date('1970/01/01 ' + row["Start"]).getHours() < 9 || new
                     Date('1970/01/01 ' + row["End"]).getHours() > 17</p>
+            
+            <p><b>Large class in small room:</b><br>row["Enrolled in the shift"] > 50 && row["Capacity"] < 50</p>
+
+            <p><b>Short Duration Classes:</b><br>
+                (new Date('1970/01/01 ' + row["End"]) - new Date('1970/01/01 ' + row["Start"])) / 60000 < 60
+            </p>
+
+            <p><b>Classes with Low Enrollment:</b><br>
+                row["Enrolled in the shift"] < 10</p>
+
+            <p><b>Classes Scheduled on Weekends:</b><br>
+                row["Day of the week"] === 'Sáb' || row["Day of the week"] === 'Dom'
+            </p>
+
+            <p><b>Classes in Non-Standard Rooms:</b><br>
+                row["Classroom characteristics"].toLowerCase().includes('lab')  || row["Classroom characteristics"].toLowerCase().includes('studio')
         </div>
     </div>
     <div id ="main-column" class="column">
