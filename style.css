@@ -31,3 +31,50 @@ body {
 #help-icon:hover .info {
     display: block;
 }
+
+#management {
+    display: flex;
+    justify-content: space-around;
+}
+
+#criteria-list ul, #dataset-list ul {
+    list-style-type: none;
+}
+
+.lists-container {
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.list {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 40%;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.remove-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    overflow: auto; /* Włącza przewijanie gdy zawartość przekracza wysokość */
+}

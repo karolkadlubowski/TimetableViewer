@@ -1,3 +1,5 @@
+import { updateCriteriaList, updateDatasetList } from './listManager.js';  // Jeśli używasz modułów
+
 let datasets = [];
 let conditions = []; // List to store all conditions
 
@@ -161,6 +163,9 @@ function updatePlot() {
     } else if (plotType === 'parallel') {
         updateParallelCoordinatesPlot();
     }
+
+    updateCriteriaList(conditions);
+    updateDatasetList(datasets);
 }
 
 function updateParallelCoordinatesPlot() {
@@ -198,7 +203,7 @@ function updateParallelCoordinatesPlot() {
     });
 
     let layout = {
-        title: 'Parallel Coordinates Analysis (Workaround)',
+        title: 'Parallel Coordinates Analysis',
         xaxis: {
             tickvals: conditions.map((_, index) => index + 1),
             ticktext: conditions.map(condition => condition.name),
@@ -226,4 +231,24 @@ function openChordDiagramWindow(dataset, criterionName) {
     } else {
         alert("Pop-up blocked. Please allow pop-ups for this site.");
     }
+}
+
+document.addEventListener('removeCriterion', (event) => {
+    removeCriterion(event.detail);
+});
+
+document.addEventListener('removeDataset', (event) => {
+    removeDataset(event.detail);
+});
+
+function removeCriterion(name) {
+    // Usuń kryterium
+    conditions = conditions.filter(condition => condition.name !== name);
+    updatePlot();
+}
+
+function removeDataset(name) {
+    // Usuń dataset
+    datasets = datasets.filter(dataset => dataset.fileName !== name);
+    updatePlot();
 }

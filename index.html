@@ -6,7 +6,8 @@
     <title>Dataset Analysis</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script type="module" src="listManager.js"></script>
+    <script type="module" src="script.js"></script>
 </head>
 
 <body>
@@ -33,7 +34,20 @@
                     Date('1970/01/01 ' + row["End"]).getHours() > 17</p>
         </div>
     </div>
-    <div id="plot"></div>
+    <div id ="main-column" class="column">
+        <div id="plot"></div>
+        <div class="lists-container">
+            <div id="criteria-list" class="list">
+                <h3>Added Criteria</h3>
+                <ul id="criteria"></ul>
+            </div>
+            <div id="datasets-list" class="list">
+                <h3>Added Datasets</h3>
+                <ul id="datasets"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="listManager.js"></script>
     <script src="script.js"></script>
 </body>
 
