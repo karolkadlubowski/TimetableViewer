@@ -3,16 +3,31 @@
 <head>
     <title>Chord Diagram</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .legend { margin-top: 20px; }
-        .legend-color-box { display: inline-block; width: 12px; height: 12px; margin-right: 5px; }
+        /* Your existing styles */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #chart {
+            flex-basis: 800px; /* Same as the width of the SVG */
+        }
+        .legend {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
     </style>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="scriptChordDiagram.js"></script>
 </head>
 <body>
     <h1 id="chart-title">Relations between criterias</h1>
-    <div id="chart"></div>
-    <div id="legend"></div>
+    <div class="chart-container">
+        <div id="chart"></div>
+        <div id="legend" class="legend"></div>
+    </div>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="scriptChordDiagram.js"></script>
 </body>
+
 </html>

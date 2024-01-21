@@ -2,6 +2,33 @@ body {
     font-family: Arial, sans-serif;
 }
 
+#chart-title {
+    text-align: center;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#chart, .legend {
+    margin: 10px;
+}
+
+#chart {
+    flex: 1; /* Allows the chart to grow and take necessary space */
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    flex: 0 0 auto; /* Prevents the legend from growing */
+    margin-left: 20px;
+}
+
 #plot {
     width: 100%;
     height: 400px;

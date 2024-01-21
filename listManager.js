@@ -1,3 +1,5 @@
+export { updateCriteriaList, updateDatasetList };
+
 function updateCriteriaList(criteria) {
     const listContainer = document.getElementById('criteria-list');
     const template = document.getElementById('criterion-item-template').content;
@@ -30,14 +32,16 @@ function updateDatasetList(datasets) {
 }
 
 function openChordDiagramWindow(dataset) {
-    const newWindow = window.open('chordDiagram.html', 'Chord Diagram', 'width=800,height=1200');
+    // Use dataset's fileName or a unique identifier as part of the window name
+    const windowName = 'Chord Diagram - ' + dataset.fileName;
+
+    const newWindow = window.open('chordDiagram.html', windowName, 'width=1100,height=900');
     if (newWindow) {
         newWindow.onload = function() {
-            newWindow.postMessage({ dataset: dataset }, '*');
+            // Include the dataset's fileName in the message
+            newWindow.postMessage({ dataset: dataset, name: dataset.fileName }, '*');
         };
     } else {
         alert("Pop-up blocked. Please allow pop-ups for this site.");
     }
 }
-
-export { updateCriteriaList, updateDatasetList };
