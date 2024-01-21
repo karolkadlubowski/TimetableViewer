@@ -50,6 +50,7 @@
                 row["Classroom characteristics"].toLowerCase().includes('lab')  || row["Classroom characteristics"].toLowerCase().includes('studio')
         </div>
     </div>
+
     <div id ="main-column" class="column">
         <div id="plot"></div>
         <div class="lists-container">
@@ -59,12 +60,28 @@
             </div>
             <div id="datasets-list" class="list">
                 <h3>Added Datasets</h3>
-                <ul id="datasets"></ul>
+                <ul id="datasets">
+                </ul>
             </div>
         </div>
     </div>
     <script src="listManager.js"></script>
     <script src="script.js"></script>
 </body>
+
+<template id="dataset-item-template">
+    <div class="list-item">
+        <span class="dataset-name"></span>
+        <button class="show-chord-button" title="Show Chord Diagram">></button>
+        <button class="remove-button">X</button>
+    </div>
+</template>
+
+<template id="criterion-item-template">
+    <div class="list-item">
+        <span class="criterion-name"></span>
+        <button class="remove-button">X</button>
+    </div>
+</template>
 
 </html>

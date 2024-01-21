@@ -111,17 +111,7 @@ function updateBarPlot() {
         plotData.push(...barsForCondition);
     });
 
-    Plotly.newPlot('plot', plotData, layout).then(() => {
-        document.getElementById('plot').on('plotly_click', function(data) {
-            if (data.points && data.points[0]) {
-                const clickedCriterionName = data.points[0].x;
-                const clickedDataset = datasets.find(d => d.fileName === data.points[0].data.name);
-                if (clickedDataset) {
-                    handleDatasetSelection(clickedDataset, clickedCriterionName);
-                }
-            }
-        });
-    });
+    Plotly.newPlot('plot', plotData, layout)
 }
 
 function handleDatasetSelection(dataset, criterionName) {
@@ -192,10 +182,6 @@ function updateParallelCoordinatesPlot() {
             line: {
                 color: dataset.color,
                 width: 2
-            },
-            // Here we add the click event
-            onclick: function() {
-                handleDatasetSelection(dataset);
             }
         });
 
@@ -220,17 +206,6 @@ function generateColor(index) {
     // Simple approach to generate a color
     let hue = index * 137.508; // Use golden angle approximation for even distribution
     return `hsl(${hue % 360}, 50%, 60%)`; // HSL: Hue, Saturation, Lightness
-}
-
-function openChordDiagramWindow(dataset, criterionName) {
-    const newWindow = window.open('chordDiagram.html', 'Chord Diagram', 'width=800,height=1200');
-    if (newWindow) {
-        newWindow.onload = function() {
-            newWindow.postMessage({ dataset: dataset }, '*');
-        };
-    } else {
-        alert("Pop-up blocked. Please allow pop-ups for this site.");
-    }
 }
 
 document.addEventListener('removeCriterion', (event) => {

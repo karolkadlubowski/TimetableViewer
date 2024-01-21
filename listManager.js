@@ -1,40 +1,43 @@
 function updateCriteriaList(criteria) {
     const listContainer = document.getElementById('criteria-list');
+    const template = document.getElementById('criterion-item-template').content;
     listContainer.innerHTML = '<h3>Added Criteria</h3>';
+
     criteria.forEach(criterion => {
-        const item = document.createElement('div');
-        item.className = 'list-item';
-        item.textContent = criterion.name;
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'remove-button';
-        removeBtn.textContent = 'X';
-        removeBtn.onclick = () => {
-            // Emit an event to remove the criterion
+        const clone = document.importNode(template, true);
+        clone.querySelector('.criterion-name').textContent = criterion.name;
+        clone.querySelector('.remove-button').onclick = () => {
             document.dispatchEvent(new CustomEvent('removeCriterion', { detail: criterion.name }));
         };
-        item.appendChild(removeBtn);
-        listContainer.appendChild(item);
+        listContainer.appendChild(clone);
     });
 }
 
 function updateDatasetList(datasets) {
     const listContainer = document.getElementById('datasets-list');
+    const template = document.getElementById('dataset-item-template').content;
     listContainer.innerHTML = '<h3>Added Datasets</h3>';
+
     datasets.forEach(dataset => {
-        const item = document.createElement('div');
-        item.className = 'list-item';
-        item.textContent = dataset.fileName;
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'remove-button';
-        removeBtn.textContent = 'X';
-        removeBtn.onclick = () => {
-            // Emit an event to remove the dataset
+        const clone = document.importNode(template, true);
+        clone.querySelector('.dataset-name').textContent = dataset.fileName;
+        clone.querySelector('.show-chord-button').onclick = () => openChordDiagramWindow(dataset);
+        clone.querySelector('.remove-button').onclick = () => {
             document.dispatchEvent(new CustomEvent('removeDataset', { detail: dataset.fileName }));
         };
-        item.appendChild(removeBtn);
-        listContainer.appendChild(item);
+        listContainer.appendChild(clone);
     });
 }
 
-// Eksport funkcji, jeśli używasz modułów
+function openChordDiagramWindow(dataset) {
+    const newWindow = window.open('chordDiagram.html', 'Chord Diagram', 'width=800,height=1200');
+    if (newWindow) {
+        newWindow.onload = function() {
+            newWindow.postMessage({ dataset: dataset }, '*');
+        };
+    } else {
+        alert("Pop-up blocked. Please allow pop-ups for this site.");
+    }
+}
+
 export { updateCriteriaList, updateDatasetList };
