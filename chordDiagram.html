@@ -6,26 +6,16 @@
         /* Your existing styles */
         .chart-container {
             display: flex;
-            justify-content: center;
             align-items: center;
-        }
-        #chart {
-            flex-basis: 800px; /* Same as the width of the SVG */
-        }
-        .legend {
-            margin-left: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+        }    
     </style>
 </head>
 <body>
-    <h1 id="chart-title">Relations between criterias</h1>
+    <h1 id="chart-title">Relations between criterias and rush hour timetable</h1>
     <div class="chart-container">
         <div id="chart"></div>
-        <div id="legend" class="legend"></div>
     </div>
+    <div id="legend" class="legend"></div>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="scriptChordDiagram.js"></script>
 </body>

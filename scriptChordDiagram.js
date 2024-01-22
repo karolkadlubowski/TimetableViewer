@@ -10,7 +10,7 @@ window.addEventListener('message', (event) => {
         createHeatmap(document, data.dataset); // Dodajemy wywołanie funkcji tworzącej mapę cieplną
         // Update the title with the dataset name
         if (data.name) {
-            document.getElementById('chart-title').textContent = 'Relations between criterias: ' + data.name;
+            document.getElementById('chart-title').textContent = 'Relations between criterias and rush hour timetable: ' + data.name;
         }
     }
 });
@@ -60,7 +60,7 @@ function buildMatrix(data) {
 
 
 function renderChordDiagram(targetElement, matrix) {
-    const width = 800;
+    const width = 500;
     const height = 800;
     const outerRadius = Math.min(width, height) * 0.5 - 40;
     const innerRadius = outerRadius - 30;
@@ -183,34 +183,6 @@ function drawHeatmap(data) {
         .attr('width', xScale.bandwidth())
         .attr('height', yScale.bandwidth())
         .style('fill', d => colorScale(d));
-
-    // Color legend
-    const legendWidth = 100;
-    const legendHeight = 10;
-
-    const legendSvg = d3.select('.chart-container').append('svg')
-        .attr('width', legendWidth)
-        .attr('height', height + margin.top + margin.bottom);
-
-    const defs = legendSvg.append('defs');
-    const linearGradient = defs.append('linearGradient')
-        .attr('id', 'linear-gradient');
-
-    linearGradient.selectAll('stop')
-        .data(colorScale.ticks().map((t, i, n) => ({ offset: `${100*i/n.length}%`, color: colorScale(t) })))
-        .enter().append('stop')
-        .attr('offset', d => d.offset)
-        .attr('stop-color', d => d.color);
-
-    legendSvg.append('rect')
-        .attr('width', legendWidth)
-        .attr('height', legendHeight)
-        .style('fill', 'url(#linear-gradient)');
-
-    legendSvg.append('g')
-        .call(d3.axisBottom(d3.scaleLinear().range([0, legendWidth]).domain(colorScale.domain()))
-            .tickSize(legendHeight))
-        .attr('transform', `translate(0,${legendHeight})`);
 }
 
 
