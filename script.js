@@ -21,6 +21,7 @@ document.getElementById('load-dataset').addEventListener('change', function(even
                     row[condition.name] = eval(condition.formula);
                 } catch (error) {
                     console.error('Error evaluating formula for', condition.name, error);
+                    row[condition.name] = false;
                 }
             });
         });
