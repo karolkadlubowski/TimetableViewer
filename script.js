@@ -193,6 +193,7 @@ function updateParallelCoordinatesPlot() {
         xaxis: {
             tickvals: conditions.map((_, index) => index + 1),
             ticktext: conditions.map(condition => condition.name),
+            tickangle: -45 // Ustawienie etykiet pod kątem 45 stopni
         },
         yaxis: {
             range: [0, 100]

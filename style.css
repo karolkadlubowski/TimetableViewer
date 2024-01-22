@@ -1,3 +1,21 @@
+#criterion-condition {
+    width: 35%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+input[type="text"] {
+    padding: 5px;
+}
+
+#load-dataset, #add-condition, #criterion-name, #criterion-condition, #plot-type {
+    padding: 5px; 
+}
+
+#plot-type {
+    padding: 5px;
+}
+
 body {
     font-family: Arial, sans-serif;
 }
