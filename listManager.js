@@ -32,13 +32,11 @@ function updateDatasetList(datasets) {
 }
 
 function openChordDiagramWindow(dataset) {
-    // Use dataset's fileName or a unique identifier as part of the window name
     const windowName = 'Chord Diagram - ' + dataset.fileName;
 
-    const newWindow = window.open('chordDiagram.html', windowName, 'width=1100,height=900');
+    const newWindow = window.open('chordDiagram.html', windowName);
     if (newWindow) {
         newWindow.onload = function() {
-            // Include the dataset's fileName in the message
             newWindow.postMessage({ dataset: dataset, name: dataset.fileName }, '*');
         };
     } else {

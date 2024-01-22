@@ -115,13 +115,6 @@ function updateBarPlot() {
     Plotly.newPlot('plot', plotData, layout)
 }
 
-function handleDatasetSelection(dataset, criterionName) {
-    console.log("Selected dataset set to:", dataset);
-    openChordDiagramWindow(dataset, criterionName);
-}
-
-
-
 function parseCSV(csvText) {
     let lines = csvText.split('\n');
     let headers = lines[0].split(';'); // Split headers using semicolons
