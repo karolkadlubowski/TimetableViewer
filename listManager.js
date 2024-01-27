@@ -34,7 +34,7 @@ function updateDatasetList(datasets) {
 function openChordDiagramWindow(dataset) {
     const windowName = 'Chord Diagram - ' + dataset.fileName;
 
-    const newWindow = window.open('chordDiagram.html', windowName);
+    const newWindow = window.open('datasetDetails.html', windowName);
     if (newWindow) {
         newWindow.onload = function() {
             newWindow.postMessage({ dataset: dataset, name: dataset.fileName }, '*');
