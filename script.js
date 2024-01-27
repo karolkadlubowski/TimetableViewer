@@ -1,7 +1,7 @@
-import { updateCriteriaList, updateDatasetList } from './listManager.js';  // Jeśli używasz modułów
+import { updateCriteriaList, updateDatasetList } from './listManager.js';
 
 let datasets = [];
-let conditions = []; // List to store all conditions
+let conditions = [];
 
 document.getElementById('load-dataset').addEventListener('change', function(event) {
     const file = event.target.files[0];
@@ -10,13 +10,13 @@ document.getElementById('load-dataset').addEventListener('change', function(even
         const text = e.target.result;
         let newDataset = {
             data: parseCSV(text),
-            fileName: file.name.split('.')[0], // Store the file name without extension
-            color: generateColor(datasets.length) // Assign generated color to dataset
+            fileName: file.name.split('.')[0],
+            color: generateColor(datasets.length)
         };
 
         // Apply all conditions to the new dataset
         conditions.forEach(condition => {
-            newDataset.data.forEach(row => { // Corrected to newDataset.data
+            newDataset.data.forEach(row => {
                 try {
                     row[condition.name] = eval(condition.formula);
                 } catch (error) {
@@ -40,14 +40,14 @@ function addNewCondition() {
 
     if (!conditionName) {
         alert("The criterion name cannot be empty. Please enter a name.");
-        return; // Exit the function without adding the new condition
+        return;
     }
 
     // Check if a condition with the same name already exists
     let conditionExists = conditions.some(condition => condition.name === conditionName);
     if (conditionExists) {
         alert("A condition with this name already exists. Please use a different name.");
-        return; // Exit the function without adding the new condition
+        return;
     }
 
     // Add the new condition to the conditions list
@@ -85,7 +85,7 @@ function updateBarPlot() {
         margin: {
             b: 100 // Gives more space for x-axis labels
         },
-        bargap: 0.05, // Further reduce the gap between bars of different groups
+        bargap: 0.05, // Reduce the gap between bars of different groups
         bargroupgap: 0.02 // Reduce the gap between bars within a group
     };
 
@@ -105,7 +105,7 @@ function updateBarPlot() {
                 },
                 text: [`${percentage.toFixed(2)}%`],
                 textposition: 'auto',
-                showlegend: conditionIndex === 0 // Show legend only for the first condition
+                showlegend: conditionIndex === 0
             };
         });
 
@@ -187,7 +187,7 @@ function updateParallelCoordinatesPlot() {
         xaxis: {
             tickvals: conditions.map((_, index) => index + 1),
             ticktext: conditions.map(condition => condition.name),
-            tickangle: -45 // Ustawienie etykiet pod kątem 45 stopni
+            tickangle: -45
         },
         yaxis: {
             range: [0, 100]
@@ -212,13 +212,11 @@ document.addEventListener('removeDataset', (event) => {
 });
 
 function removeCriterion(name) {
-    // Usuń kryterium
     conditions = conditions.filter(condition => condition.name !== name);
     updatePlot();
 }
 
 function removeDataset(name) {
-    // Usuń dataset
     datasets = datasets.filter(dataset => dataset.fileName !== name);
     updatePlot();
 }

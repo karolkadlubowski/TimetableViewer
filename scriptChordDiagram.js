@@ -1,13 +1,13 @@
 window.addEventListener('message', (event) => {
     console.log("Received message:", event.data);
     if (event.origin !== window.location.origin) {
-        return; // Safety against untrusted origins
+        return; // Safety measure against untrusted origins
     }
     const data = event.data;
     if (data.dataset) {
         console.log("Dataset:", data.dataset.name);
         createChordDiagram(document, data.dataset);
-        createHeatmap(document, data.dataset); // Dodajemy wywołanie funkcji tworzącej mapę cieplną
+        createHeatmap(document, data.dataset);
         // Update the title with the dataset name
         if (data.name) {
             document.getElementById('chart-title').textContent = 'Relations between criterias and rush hour heatmap: ' + data.name;
@@ -104,11 +104,9 @@ function renderChordDiagram(targetElement, matrix) {
         .style('stroke', d => d3.rgb(color(d.source.index)).darker());
 }
 
-// DO NOWEGO PLIKU
-
 function prepareHeatmapData(data) {
-    const days = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]; // Dni tygodnia po portugalsku
-    const hours = Array.from({ length: 24 }, (_, i) => i); // Godziny od 0 do 23
+    const days = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]; 
+    const hours = Array.from({ length: 24 }, (_, i) => i);
 
     let heatmapData = new Array(days.length);
     for (let i = 0; i < days.length; i++) {

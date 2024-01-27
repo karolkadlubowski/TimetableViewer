@@ -140,14 +140,14 @@ body {
 }
 
 .list-item button:hover {
-    color: #007bff; /* Niebieski kolor podczas najechania */
+    color: #007bff;
 }
 
 .dataset-name {
-    flex-grow: 1; /* Pozwala nazwie datasetu zająć dostępną przestrzeń */
+    flex-grow: 1;
 }
 
 .show-chord-button {
-    margin-left: 10px; /* Dodaje odstęp między nazwą a przyciskiem pokazania diagramu */
+    margin-left: 10px; 
     cursor: pointer;
 }
