@@ -7,7 +7,7 @@ window.addEventListener('message', (event) => {
     if (data.dataset) {
         console.log("Dataset:", data.dataset.name);
         createChordDiagram(document, data.dataset);
-        createHeatmap(document, data.dataset);
+        createHeatmap(data.dataset);
         // Update the title with the dataset name
         if (data.name) {
             document.getElementById('chart-title').textContent = 'Relations between criterias and rush hour heatmap: ' + data.name;
@@ -209,7 +209,7 @@ function drawHeatmap(data) {
 
 
 
-function createHeatmap(doc, dataset) {
+function createHeatmap(dataset) {
     let heatmapData = prepareHeatmapData(dataset.data);
     console.log("Heatmap data:", heatmapData);
     drawHeatmap(heatmapData);

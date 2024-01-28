@@ -23,7 +23,7 @@ function updateDatasetList(datasets) {
     datasets.forEach(dataset => {
         const clone = document.importNode(template, true);
         clone.querySelector('.dataset-name').textContent = dataset.fileName;
-        clone.querySelector('.show-chord-button').onclick = () => openChordDiagramWindow(dataset);
+        clone.querySelector('.show-chord-button').onclick = () => openDatasetDetailsWindow(dataset);
         clone.querySelector('.remove-button').onclick = () => {
             document.dispatchEvent(new CustomEvent('removeDataset', { detail: dataset.fileName }));
         };
@@ -31,7 +31,7 @@ function updateDatasetList(datasets) {
     });
 }
 
-function openChordDiagramWindow(dataset) {
+function openDatasetDetailsWindow(dataset) {
     const windowName = 'Chord Diagram - ' + dataset.fileName;
 
     const newWindow = window.open('datasetDetails.html', windowName);
